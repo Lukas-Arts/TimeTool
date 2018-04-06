@@ -17,17 +17,17 @@ MAIN-PARAMETER:
 | -start    | Log start |
 | -stop     | Log stop  |
 | -gui      | Starts the GUI |
-| -monthly  | Splits the .csv defined by -l into separateMonths (also splits working hours into separate Days) |
-| -list     | Lists the current Month, or the Month defined by -m and -y (requires -monthly to be called first) |
+| -monthly  | Splits the .csv defined by -l into separateMonths (also splits working hours into separate Days, if necessary) |
+| -list     | Lists the current Month, or the Month defined by -m and -y (requires corresponding '-monthly'-Files) |
 | -help     | Shows this Help-Message |
-| -version  | Shows the current version |
+| -version  | Shows the current Version |
         
 SETTING-PARAMETER: 
 
 | Parameter | Funktion  |
 | --------- | --------- |
-| -p/-P/-project/-Project | PROJECTNAME (Optional, if not present setting is taken from ./time.props) |
-| -c/-C/-comment/-Comment | COMMENT (Optional, if not present setting is taken from ./time.props) |
-| -l/-L/-location/-Location | LOCATION (the location for the Logging-.csv-File) (Optional, if not present setting is taken from ./time.props) |
+| -p/-P/-project/-Project | PROJECTNAME (Optional, if not present Setting is taken from ./time.props) |
+| -c/-C/-comment/-Comment | COMMENT (Optional, if not present Setting is taken from ./time.props) |
+| -l/-L/-location/-Location | LOCATION (the location for the Logging-.csv-File) (Optional, if not present Setting is taken from ./time.props) |
 | -m/-M/-month/-Month | MONTH (only valid for -list) |
 | -y/-Y/-year/-Year | YEAR (only valid for -list) |
