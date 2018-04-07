@@ -151,8 +151,8 @@ public class TimeTool {
         }
         List<String> lines=readFile(settings.get(Settings.LOCATION).replace(".csv","_"+year+"_"+
                 Util.getWithLeadingZero(month)+".csv"));
-        System.out.println("    Date    |   Start  |    End   | Duration |    Project    |         Comment         ");
-        System.out.println("------------+----------+----------+----------+---------------+-------------------------");
+        System.out.println("    Date    |   Start  |    End   | Duration  |    Project    |         Comment         ");
+        System.out.println("------------+----------+----------+-----------+---------------+-------------------------");
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         long sum=0;
         for(String l:lines){
@@ -170,11 +170,11 @@ public class TimeTool {
                     String end=Util.getWithLeadingZero(zdt3.getHour())+":"+ Util.getWithLeadingZero(zdt3.getMinute())+
                             ":"+Util.getWithLeadingZero(zdt3.getSecond());
                     sum+=ChronoUnit.MILLIS.between(zdt2,zdt3);
+                    int d=(int) ChronoUnit.DAYS.between(zdt2,zdt3);
                     int h=(int) ChronoUnit.HOURS.between(zdt2,zdt3);
                     int m=(int) ChronoUnit.MINUTES.between(zdt2,zdt3);
-                    int sec=(int) ChronoUnit.SECONDS.between(zdt2,zdt3);
-                    String duration=Util.getBlankedString(Util.getWithLeadingZero(h)+":"+
-                            Util.getWithLeadingZero(m%60)+":"+Util.getWithLeadingZero(sec%60),8);
+                    String duration=Util.getBlankedString(d+"d "+Util.getWithLeadingZero(h%24)+":"+
+                            Util.getWithLeadingZero(m%60),9,Util.ADD_UNEVEN_AT_START);
                     String p="";
                     String comment="";
                     if(s.length>2)p=s[2];
@@ -189,9 +189,10 @@ public class TimeTool {
         }
         if(sum>0){
             Duration sum2=Duration.ofMillis(sum);
-            String sum3=Util.getWithLeadingZero(sum2.toHours())+":"+Util.getWithLeadingZero(sum2.toMinutes()%60)+":"+Util.getWithLeadingZero(sum2.getSeconds()%60);
-            System.out.println("------------+----------+----------+----------+---------------+-------------------------");
-            System.out.println("            |          |   SUM=   |"+Util.getBlankedString(sum3,10)+"|               |                         ");
+            String sum3=sum2.toDays()+"d "+Util.getWithLeadingZero(sum2.toHours()%24)+":"+Util.getWithLeadingZero(sum2.toMinutes()%60);
+            System.out.println("------------+----------+----------+-----------+---------------+-------------------------");
+            System.out.println("            |          |   SUM=   |"+Util.getBlankedString(sum3,11,
+                    Util.ADD_UNEVEN_AT_START)+"|               |                         ");
         }
     }
     private void monthly(){
@@ -276,7 +277,8 @@ public class TimeTool {
         try {
             return Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to Read File: "+filePath);
+            System.err.println("Cause: "+e.getMessage());
         }
         return new ArrayList<String>();
     }
