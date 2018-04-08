@@ -9,11 +9,20 @@ public class Util {
         int h= (int) ((diff/360000)%24);
         return getWithLeadingZero(h)+":"+getWithLeadingZero(m)+":"+getWithLeadingZero(s);
     }
-    public static String getWithLeadingZero(int i){
-        return (i<10?"0"+i:i+"");
+
+    public static String getWithLeadingZero(Number i,int digits){
+        String s=""+i;
+        int max=1;
+        for(int j=0;j<digits-1;j++){
+            max=max*10;
+            if(i.intValue()<max){
+                s="0"+s;
+            }
+        }
+        return s;
     }
-    public static String getWithLeadingZero(long i){
-        return getWithLeadingZero((int)i);
+    public static String getWithLeadingZero(Number i){
+        return getWithLeadingZero(i,2);
     }
     public static String getBlankedString(String s,int maxSize){
         return getBlankedString(s,maxSize,ADD_UNEVEN_AT_END);

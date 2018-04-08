@@ -1,6 +1,6 @@
 package lynx.TimeTool.GUI;
 
-import lynx.TimeTool.Settings;
+import lynx.TimeTool.Setting;
 import lynx.TimeTool.TimeTool;
 import lynx.TimeTool.Util.Util;
 
@@ -40,7 +40,7 @@ public class GUI extends JDialog{
         jl.setOpaque(true);
         this.tt=new TimeTool(settings);
 
-        jl.setBackground(Settings.getColorFromString(settings.get(Settings.INACTIVE_COLOR)));
+        jl.setBackground(Setting.getColorFromString(settings.get(Setting.INACTIVE_COLOR)));
         Toolkit t=Toolkit.getDefaultToolkit();
         this.setLocation(t.getScreenSize().width / 2 - width / 2, 0);
         addMouseListener(new MouseAdapter(){
@@ -48,7 +48,7 @@ public class GUI extends JDialog{
             public void mouseClicked(MouseEvent e){
                 if(e.getClickCount()==2){
                     if(running){
-                        if(Boolean.parseBoolean(settings.get(Settings.ASK_ON_LOGOUT))){
+                        if(Boolean.parseBoolean(settings.get(Setting.ASK_ON_LOGOUT))){
                             new AskOnLogoutGUI(settings,self);
                         } else {
                             stop(settings);
@@ -73,10 +73,10 @@ public class GUI extends JDialog{
                 }
             }
         });
-        setUpLoginHook(settings.get(Settings.GLOBAL_LOGIN_HOOK));
-        setUpLogoutHook(settings.get(Settings.GLOBAL_LOGOUT_HOOK));
+        setUpLoginHook(settings.get(Setting.GLOBAL_LOGIN_HOOK));
+        setUpLogoutHook(settings.get(Setting.GLOBAL_LOGOUT_HOOK));
         //this.setType(Type.POPUP);
-        boolean alwaysOnTop=Boolean.parseBoolean(settings.get(Settings.ALWAYS_ON_TOP));
+        boolean alwaysOnTop=Boolean.parseBoolean(settings.get(Setting.ALWAYS_ON_TOP));
         System.out.println("AlwaysOnTop: "+alwaysOnTop);
         this.setAlwaysOnTop(alwaysOnTop);
         this.setVisible(true);
@@ -144,7 +144,7 @@ public class GUI extends JDialog{
     public void stop(HashMap<String,String> settings){
         long stop=tt.stop(settings);
         System.out.println("Leaving Work at "+new Timestamp(stop).toString());
-        jl.setBackground(Settings.getColorFromString(tt.getSettings().get(Settings.INACTIVE_COLOR)));
+        jl.setBackground(Setting.getColorFromString(tt.getSettings().get(Setting.INACTIVE_COLOR)));
         running=false;
         this.repaint();
         this.revalidate();
@@ -152,7 +152,7 @@ public class GUI extends JDialog{
     public void start(){
         start=tt.start();
         System.out.println("Going to Work at "+new Timestamp(start).toString());
-        jl.setBackground(Settings.getColorFromString(tt.getSettings().get(Settings.ACTIVE_COLOR)));
+        jl.setBackground(Setting.getColorFromString(tt.getSettings().get(Setting.ACTIVE_COLOR)));
         running=true;
         Thread th=new Thread(new Runnable() {
             @Override

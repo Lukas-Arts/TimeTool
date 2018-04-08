@@ -2,7 +2,7 @@ package lynx.TimeTool;
 
 import java.awt.*;
 
-public class Settings{
+public class Setting {
     public static final String VERSION="v0.2";
     public static final String PROJECT="Project";
     public static final String COMMENT="Comment";
@@ -15,6 +15,7 @@ public class Settings{
     public static final String GLOBAL_LOGIN_HOOK="Global_Login-Shortcut";
     public static final String MONTH="Month";
     public static final String YEAR="Year";
+    public static final String DIAGRAM="Diagram";
     public static Color getColorFromString(String s){
         Color color=Color.black;
         if(s!=null){

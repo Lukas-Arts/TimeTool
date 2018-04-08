@@ -6,8 +6,13 @@ import java.util.HashMap;
 
 public class RightClickMenu extends JPopupMenu {
     public RightClickMenu(HashMap<String,String> settings){
-        add(new JMenuItem(new MyAbstractAction("Settings"){
-
+        add(new JMenuItem(new MyAbstractAction("Diagram"){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new DiagramGUI(settings);
+            }
+        }));
+        add(new JMenuItem(new MyAbstractAction("Setting"){
             @Override
             public void actionPerformed(ActionEvent e) {
                 new SettingsGUI(settings);

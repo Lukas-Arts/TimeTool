@@ -1,6 +1,6 @@
 package lynx.TimeTool.GUI;
 
-import lynx.TimeTool.Settings;
+import lynx.TimeTool.Setting;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,7 +34,7 @@ public class AskOnLogoutGUI extends JFrame {
 
         JPanel jp3=new JPanel(new GridLayout(1,2));
         jp3.add(new JLabel("Project:"));
-        JTextField jtf=new JTextField(settings.get(Settings.PROJECT));
+        JTextField jtf=new JTextField(settings.get(Setting.PROJECT));
         jp3.add(jtf);
         jp2.add(jp3,BorderLayout.NORTH);
 
@@ -42,7 +42,7 @@ public class AskOnLogoutGUI extends JFrame {
         JLabel cLabel=new JLabel("Comment:");
         cLabel.setVerticalAlignment(SwingConstants.TOP);
         jp4.add(cLabel);
-        JTextArea jta=new JTextArea(settings.get(Settings.COMMENT));
+        JTextArea jta=new JTextArea(settings.get(Setting.COMMENT));
         jta.setRows(5);
         jp4.add(jta);
         jp2.add(jp4,BorderLayout.CENTER);
@@ -65,8 +65,8 @@ public class AskOnLogoutGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 HashMap<String,String> settings=new HashMap<>(self.settings);
-                settings.put(Settings.PROJECT,jtf.getText());
-                settings.put(Settings.COMMENT,jta.getText());
+                settings.put(Setting.PROJECT,jtf.getText());
+                settings.put(Setting.COMMENT,jta.getText());
                 gui.stop(settings);
                 dispose();
             }

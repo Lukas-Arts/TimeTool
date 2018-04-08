@@ -13,15 +13,10 @@ import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class TimeTool {
     public static final String START="start";
@@ -88,16 +83,16 @@ public class TimeTool {
     }
     public long start(){
         long start=-1;
-        List<String> lines=readFile(settings.get(Settings.LOCATION));
+        List<String> lines=readFile(settings.get(Setting.LOCATION));
         if((lines.size()>0&& lines.get(lines.size()-1).matches(tsRegEx+";;.*"))){
             System.err.println("ERROR: Last Entry not Closed! : "+lines.size()+" "+lines.get(lines.size()-1));
         }else{
             try{
                 BufferedWriter bw=new BufferedWriter(
-                        new FileWriter(settings.getOrDefault(Settings.LOCATION,"time.csv"),true));
+                        new FileWriter(settings.getOrDefault(Setting.LOCATION,"time.csv"),true));
                 start=System.currentTimeMillis();
                 Timestamp ts=new Timestamp(start);
-                bw.write(ts.toString()+";;"+settings.get(Settings.PROJECT)+";"+settings.get(Settings.COMMENT));
+                bw.write(ts.toString()+";;"+settings.get(Setting.PROJECT)+";"+settings.get(Setting.COMMENT));
                 bw.flush();
                 bw.close();
             } catch (IOException e) {
@@ -108,7 +103,7 @@ public class TimeTool {
     }
     public long stop(HashMap<String,String> settings){
         long stop=-1;
-        List<String> lines=readFile(settings.get(Settings.LOCATION));
+        List<String> lines=readFile(settings.get(Setting.LOCATION));
         if((lines.size()>0&&lines.get(lines.size()-1).equalsIgnoreCase(""))){
             System.err.println("ERROR: Last Entry already Closed!");
         } else if(lines.size()==0){
@@ -121,16 +116,16 @@ public class TimeTool {
             String withoutTS=s.replace(lastTS,"");
             String replacement;
             //don't overwrite existing comments, except they are the default ones
-            if(withoutTS.equalsIgnoreCase(";;"+this.settings.get(Settings.PROJECT)+";"+this.settings.get(Settings.COMMENT))||
+            if(withoutTS.equalsIgnoreCase(";;"+this.settings.get(Setting.PROJECT)+";"+this.settings.get(Setting.COMMENT))||
                     withoutTS.equalsIgnoreCase(";;;")){
-                replacement=lastTS+";"+ts.toString()+";"+settings.get(Settings.PROJECT)+";"+settings.get(Settings.COMMENT);
+                replacement=lastTS+";"+ts.toString()+";"+settings.get(Setting.PROJECT)+";"+settings.get(Setting.COMMENT);
             }else {
                 replacement=s.replaceFirst(";;",";"+ts.toString()+";");
             }
 
             lines.set(lines.size()-1,replacement);
             try {
-                Files.write(Paths.get(settings.get(Settings.LOCATION)), lines, StandardCharsets.UTF_8);
+                Files.write(Paths.get(settings.get(Setting.LOCATION)), lines, StandardCharsets.UTF_8);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -138,9 +133,9 @@ public class TimeTool {
         return stop;
     }
     private void list(){
-        int year=Integer.parseInt(settings.getOrDefault(Settings.YEAR,"-1"));
-        int month=Integer.parseInt(settings.getOrDefault(Settings.MONTH,"-1"));
-        String project=settings.get(Settings.PROJECT);
+        int year=Integer.parseInt(settings.getOrDefault(Setting.YEAR,"-1"));
+        int month=Integer.parseInt(settings.getOrDefault(Setting.MONTH,"-1"));
+        String project=settings.get(Setting.PROJECT);
         System.out.println(project);
         ZonedDateTime zdt=ZonedDateTime.now();
         if(year<0){
@@ -149,88 +144,137 @@ public class TimeTool {
         if(month<0){
             month=zdt.getMonthValue();
         }
-        List<String> lines=readFile(settings.get(Settings.LOCATION).replace(".csv","_"+year+"_"+
-                Util.getWithLeadingZero(month)+".csv"));
-        System.out.println("    Date    |   Start  |    End   | Duration  |    Project    |         Comment         ");
-        System.out.println("------------+----------+----------+-----------+---------------+-------------------------");
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        long sum=0;
-        for(String l:lines){
-            String s[]=l.split(";");
-            try {
-                if((project!=null&&!"".equalsIgnoreCase(project)&&s[2].equalsIgnoreCase(project))||(project==null||"".equalsIgnoreCase(project))){
-                    ZonedDateTime zdt2=ZonedDateTime.ofInstant(Instant.ofEpochMilli(sdf.parse(s[0]).getTime()),
-                            ZoneId.systemDefault());
-                    ZonedDateTime zdt3=ZonedDateTime.ofInstant(Instant.ofEpochMilli(sdf.parse(s[1]).getTime()),
-                            ZoneId.systemDefault());
-                    String date=zdt2.getYear()+"-"+ Util.getWithLeadingZero(zdt2.getMonthValue())+"-"+
-                            Util.getWithLeadingZero(zdt2.getDayOfMonth());
-                    String start=Util.getWithLeadingZero(zdt2.getHour())+":"+ Util.getWithLeadingZero(zdt2.getMinute())+
-                            ":"+Util.getWithLeadingZero(zdt2.getSecond());
-                    String end=Util.getWithLeadingZero(zdt3.getHour())+":"+ Util.getWithLeadingZero(zdt3.getMinute())+
-                            ":"+Util.getWithLeadingZero(zdt3.getSecond());
-                    sum+=ChronoUnit.MILLIS.between(zdt2,zdt3);
-                    int d=(int) ChronoUnit.DAYS.between(zdt2,zdt3);
-                    int h=(int) ChronoUnit.HOURS.between(zdt2,zdt3);
-                    int m=(int) ChronoUnit.MINUTES.between(zdt2,zdt3);
-                    String duration=Util.getBlankedString(d+"d "+Util.getWithLeadingZero(h%24)+":"+
-                            Util.getWithLeadingZero(m%60),9,Util.ADD_UNEVEN_AT_START);
-                    String p="";
-                    String comment="";
-                    if(s.length>2)p=s[2];
-                    if(s.length>3)comment=s[3];
-                    System.out.println(" "+date+" | "+start+" | "+end+" | "+duration+" | "+
-                            Util.getBlankedString(p,13)+" | "+Util.getBlankedString(comment,25)+" ");
-
-                }
-            } catch (ParseException | IndexOutOfBoundsException e) {
-                //e.printStackTrace();
+        String d=settings.getOrDefault(Setting.DIAGRAM,"");
+        switch (d){
+            case "bar":{
+                barDiagram(year,month,project);
+                break;
+            }
+            default:{
+                list(year,month,project);
             }
         }
+    }
+    private void barDiagram(int year, int month,String project){
+        if("".equalsIgnoreCase(project)||project==null){
+            System.out.println("WorkTime Bar-Diagram for "+year+"-"+Util.getWithLeadingZero(month));
+        }else System.out.println("WorkTime Bar-Diagram for "+year+"-"+Util.getWithLeadingZero(month)+", Project: "+project);
+        System.out.println();
+        ArrayList<WorkTimeItem> items=readWorkTimeFile(settings.get(Setting.LOCATION).replace(".csv",
+                "_"+year+"_"+Util.getWithLeadingZero(month)+".csv"),project);
+        HashMap<String,Long> dayWorkMap=new HashMap<>();
+        for(WorkTimeItem item:items){
+            String d=item.getStartDate();
+            dayWorkMap.put(d,dayWorkMap.getOrDefault(d, 0L)+item.getDuration());
+        }
+        long max=0;
+        for(long l:dayWorkMap.values()){
+            if(max<l){
+                max=l;
+            }
+        }
+        char[][] diagram=new char[10][dayWorkMap.size()*4];
+        for(int i=0;i<diagram.length;i++) {
+            for (int j = 0; j < diagram[i].length; j++) {
+                diagram[i][j]=' ';
+            }
+        }
+        ArrayList<String> keys=new ArrayList<>(dayWorkMap.keySet());
+        Collections.sort(keys);
+        for(int j=0;j<keys.size();j++){
+            String d=keys.get(j);
+            long w=dayWorkMap.get(d);
+            if(w>0){
+                double i=((w/(double)max)*10)-1;
+                for(int i2=diagram.length-1;i2>=diagram.length-(int)i-1;i2--){
+                    diagram[i2][j*4+1]='█';
+                    diagram[i2][j*4+2]='█';
+                }
+                double i2=diagram.length-i-1;
+
+                double diff=(10-i2)-(9-(int)i2);
+                //System.out.println(diff+" "+i+" "+i2+" "+(int)i2);
+                if(diff!=0){
+                    if(diff<0.25){
+                        diagram[(int)i2][j*4+1]='_';
+                        diagram[(int)i2][j*4+2]='_';
+                    }else if(diff<0.75){
+                        diagram[(int)i2][j*4+1]='▄';
+                        diagram[(int)i2][j*4+2]='▄';
+                    }
+                }
+            }
+        }
+        for(int i=0;i<diagram.length;i++){
+            if(i==0){
+                System.out.print(Util.getWithLeadingZero((int)(max/1000.0/60.0/60.0))+"h|");
+            }else {
+                System.out.print("   |");
+            }
+            for(int j=0;j<diagram[i].length;j++){
+                System.out.print(diagram[i][j]);
+            }
+            System.out.println();
+        }
+        System.out.println("---+-----------------------------------------------------------");
+        System.out.print("   |");
+        for (int i=0;i<keys.size();i++){
+            String day=keys.get(i).split("-")[2];
+            System.out.print("|"+day+"|");
+        }
+    }
+    private void list(int year, int month,String project){
+        List<WorkTimeItem> items=readWorkTimeFile(settings.get(Setting.LOCATION).replace(".csv","_"+year+"_"+
+                Util.getWithLeadingZero(month)+".csv"),project);
+        System.out.println("    Date    |   Start  |    End   |  Duration  |    Project    |         Comment         ");
+        System.out.println("------------+----------+----------+------------+---------------+-------------------------");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        long sum=0;
+        for(WorkTimeItem item:items){
+            long d=item.getDuration();
+            sum+=d;
+            String date=item.getStartDate();
+            String start=item.getStartTime();
+            String end=item.getEndTime();
+            String duration=Util.getBlankedString(WorkTimeItem.getShortDuration(d),10,Util.ADD_UNEVEN_AT_START);
+            String p=Util.getBlankedString(item.getProject(),13);
+            String comment=Util.getBlankedString(item.getComment(),23);
+            System.out.println(" "+date+" | "+start+" | "+end+" | "+duration+" | "+p+" | "+comment+" ");
+        }
         if(sum>0){
-            Duration sum2=Duration.ofMillis(sum);
-            String sum3=sum2.toDays()+"d "+Util.getWithLeadingZero(sum2.toHours()%24)+":"+Util.getWithLeadingZero(sum2.toMinutes()%60);
-            System.out.println("------------+----------+----------+-----------+---------------+-------------------------");
-            System.out.println("            |          |   SUM=   |"+Util.getBlankedString(sum3,11,
+            String sum2=WorkTimeItem.getLongDuration(sum);
+            System.out.println("------------+----------+----------+------------+---------------+-------------------------");
+            System.out.println("            |          |   SUM=   |"+Util.getBlankedString(sum2,12,
                     Util.ADD_UNEVEN_AT_START)+"|               |                         ");
         }
     }
     private void monthly(){
-        List<String> lines=readFile(settings.get(Settings.LOCATION));
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        List<WorkTimeItem> items=readWorkTimeFile(settings.get(Setting.LOCATION));
         int lastMonth=-1;
         int lastYear=-1;
-        String location=settings.get(Settings.LOCATION).replace(".csv","");
+        String location=settings.get(Setting.LOCATION).replace(".csv","");
         BufferedWriter bw=null;
-        for(String l:lines){
-            String s[]=l.split(";");
-            if(s.length>=2){
-                String project="";
-                String comment="";
-                if(s.length>2)
-                    project=s[2];
-                if(s.length>3)
-                    comment=s[3];
+        for(WorkTimeItem item:items){
+            String project=item.getProject();
+            String comment=item.getComment();
+            for(WorkTimeItem item2:item.splitIntoDays()){
+                ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(item2.getStart()),ZoneId.systemDefault());
+                int month=zdt.getMonthValue();
+                int year=zdt.getYear();
                 try {
-                    for(String s2:splitIntoDays(s[0],s[1],project,comment)){
-                        Instant i=Instant.ofEpochMilli(sdf.parse(s2.split(";")[0]).getTime());
-                        ZonedDateTime zdt = ZonedDateTime.ofInstant(i,ZoneId.systemDefault());
-                        int month=zdt.getMonthValue();
-                        int year=zdt.getYear();
-                        if(lastMonth!=month||lastYear!=year){
-                            lastMonth=month;
-                            lastYear=year;
-                            if(bw!=null)
-                                bw.close();
-                            bw=new BufferedWriter(
-                                    new FileWriter(location+"_"+year+"_"+(month<10?"0"+month:month)+".csv"));
-                        }
-                        if(bw!=null){
-                            bw.write(s2);
-                            bw.newLine();
-                        }
+                    if(lastMonth!=month||lastYear!=year){
+                        lastMonth=month;
+                        lastYear=year;
+                        if(bw!=null)
+                            bw.close();
+                        bw=new BufferedWriter(
+                                new FileWriter(location+"_"+year+"_"+(month<10?"0"+month:month)+".csv"));
                     }
-                } catch (ParseException | IOException e) {
+                    if(bw!=null){
+                            bw.write(item2.toString(project,comment));
+                        bw.newLine();
+                    }
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -243,44 +287,46 @@ public class TimeTool {
             }
         }
     }
-    private ArrayList<String> splitIntoDays(String d1,String d2,String project,String comment){
-        ArrayList<String> dailyLogs=new ArrayList<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        Instant i1= null;
-        ZonedDateTime zdt2=null;
-        ZonedDateTime zdt3=null;
-        try {
-            i1 = Instant.ofEpochMilli(sdf.parse(d1).getTime());
-            zdt2=ZonedDateTime.ofInstant(Instant.ofEpochMilli(sdf.parse(d2).getTime()),ZoneId.systemDefault());
-            zdt3=ZonedDateTime.ofInstant(Instant.ofEpochMilli(sdf.parse(d1).getTime()),ZoneId.systemDefault());
-            zdt3=zdt3.minusHours(zdt3.getHour()).minusMinutes(zdt3.getMinute()).minusSeconds(zdt3.getSecond())
-                    .minusNanos(zdt3.getNano());
-            ArrayList<String> timestamps=new ArrayList<>();
-            timestamps.add(new Timestamp(i1.toEpochMilli()).toString());
-            do{
-                zdt3=zdt3.plusDays(1);
-                if(zdt3.isBefore(zdt2)){
-                    timestamps.add(new Timestamp(zdt3.toEpochSecond()*1000).toString());
-                }else{
-                    timestamps.add(new Timestamp(zdt2.toEpochSecond()*1000).toString());
-                }
-            }while(zdt3.isBefore(zdt2));
-            for(int i=1;i<timestamps.size();i++){
-                dailyLogs.add(timestamps.get(i-1)+";"+timestamps.get(i)+";"+project+";"+comment);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return dailyLogs;
-    }
-    private List<String> readFile(String filePath){
+    public static List<String> readFile(String filePath){
         try {
             return Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
         } catch (IOException e) {
             System.err.println("Failed to Read File: "+filePath);
-            System.err.println("Cause: "+e.getMessage());
+            e.printStackTrace();
         }
         return new ArrayList<String>();
+    }
+    public static ArrayList<WorkTimeItem> readWorkTimeFile(String filePath){
+        return readWorkTimeFile(filePath,"");
+    }
+    public static ArrayList<WorkTimeItem> readWorkTimeFile(String filePath,String project){
+        ArrayList<String> projects=new ArrayList<>();
+        projects.add(project);
+        return readWorkTimeFile(filePath,projects);
+    }
+    public static ArrayList<WorkTimeItem> readWorkTimeFile(String filePath,List<String> projects){
+        ArrayList<WorkTimeItem> items=new ArrayList<>();
+        try {
+            List<String> lines=Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
+            for(String s:lines){
+                WorkTimeItem wti=WorkTimeItem.parse(s);
+                if(projects.contains(wti.getProject())||(projects.size()==1&&projects.get(0).equalsIgnoreCase(""))){
+                    items.add(wti);
+                }
+            }
+        } catch (IOException | ParseException e) {
+            System.err.println("Failed to Read File: "+filePath);
+            e.printStackTrace();
+        }
+        return items;
+    }
+    public static Set<String> getProjectsFromFile(String filePath){
+        ArrayList<WorkTimeItem> items=readWorkTimeFile(filePath);
+        HashSet<String> projects=new HashSet<>();
+        for(WorkTimeItem item:items){
+            projects.add(item.getProject());
+        }
+        return projects;
     }
     private static HashMap<String, String> getSettings(String args[]){
         HashMap<String,String> settings=readSettings();
@@ -296,39 +342,46 @@ public class TimeTool {
                     next=args[i];
                 } else {
                     switch (next){
+                        case "-d":
+                        case "-D":
+                        case "-diagram":
+                        case "-Diagram":{
+                            settings.put(Setting.DIAGRAM,args[i]);
+                            break;
+                        }
                         case "-p":
                         case "-P":
                         case "-project":
                         case "-Project":{
-                            settings.put(Settings.PROJECT,args[i]);
+                            settings.put(Setting.PROJECT,args[i]);
                             break;
                         }
                         case "-c":
                         case "-C":
                         case "-comment":
                         case "-Comment":{
-                            settings.put(Settings.COMMENT,args[i]);
+                            settings.put(Setting.COMMENT,args[i]);
                             break;
                         }
                         case "-l":
                         case "-L":
                         case "-location":
                         case "-Location":{
-                            settings.put(Settings.LOCATION,args[i]);
+                            settings.put(Setting.LOCATION,args[i]);
                             break;
                         }
                         case "-m":
                         case "-M":
                         case "-month":
                         case "-Month":{
-                            settings.put(Settings.MONTH,args[i]);
+                            settings.put(Setting.MONTH,args[i]);
                             break;
                         }
                         case "-y":
                         case "-Y":
                         case "-year":
                         case "-Year":{
-                            settings.put(Settings.YEAR,args[i]);
+                            settings.put(Setting.YEAR,args[i]);
                             break;
                         }
                     }
@@ -343,17 +396,17 @@ public class TimeTool {
         try {
             Properties p=new Properties();
             p.load(new FileReader("./time.props"));
-            settings.put(Settings.PROJECT,p.getProperty(Settings.PROJECT));
-            settings.put(Settings.COMMENT,p.getProperty(Settings.COMMENT));
-            settings.put(Settings.LOCATION,p.getProperty(Settings.LOCATION,"./time.csv"));
+            settings.put(Setting.PROJECT,p.getProperty(Setting.PROJECT));
+            settings.put(Setting.COMMENT,p.getProperty(Setting.COMMENT));
+            settings.put(Setting.LOCATION,p.getProperty(Setting.LOCATION,"./time.csv"));
 
-            settings.put(Settings.ASK_ON_LOGOUT,p.getProperty(Settings.ASK_ON_LOGOUT,"false"));
-            settings.put(Settings.ACTIVE_COLOR,p.getProperty(Settings.ACTIVE_COLOR));
-            settings.put(Settings.INACTIVE_COLOR,p.getProperty(Settings.INACTIVE_COLOR));
+            settings.put(Setting.ASK_ON_LOGOUT,p.getProperty(Setting.ASK_ON_LOGOUT,"false"));
+            settings.put(Setting.ACTIVE_COLOR,p.getProperty(Setting.ACTIVE_COLOR));
+            settings.put(Setting.INACTIVE_COLOR,p.getProperty(Setting.INACTIVE_COLOR));
 
-            settings.put(Settings.ALWAYS_ON_TOP,p.getProperty(Settings.ALWAYS_ON_TOP,"true"));
-            settings.put(Settings.GLOBAL_LOGOUT_HOOK,p.getProperty(Settings.GLOBAL_LOGOUT_HOOK));
-            settings.put(Settings.GLOBAL_LOGIN_HOOK,p.getProperty(Settings.GLOBAL_LOGIN_HOOK));
+            settings.put(Setting.ALWAYS_ON_TOP,p.getProperty(Setting.ALWAYS_ON_TOP,"true"));
+            settings.put(Setting.GLOBAL_LOGOUT_HOOK,p.getProperty(Setting.GLOBAL_LOGOUT_HOOK));
+            settings.put(Setting.GLOBAL_LOGIN_HOOK,p.getProperty(Setting.GLOBAL_LOGIN_HOOK));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -363,7 +416,7 @@ public class TimeTool {
         System.out.println("");
         System.out.println("\t\t\t+---------------------------+");
         System.out.println("\t\t\t|                           |");
-        System.out.println("\t\t\t|"+Util.getBlankedString("TimeTool "+Settings.VERSION+" © by 1ynx",28)+"|");
+        System.out.println("\t\t\t|"+Util.getBlankedString("TimeTool "+ Setting.VERSION+" © by 1ynx",28)+"|");
         System.out.println("\t\t\t|                           |");
         System.out.println("\t\t\t+---------------------------+");
         System.out.println("");
@@ -372,7 +425,7 @@ public class TimeTool {
         infoHeader();
         System.out.println("This is a simple Tool for logging working hours. Just a simple CLI and a small");
         System.out.println("GUI. It utilizes simple .csv-Files to store and manage all Data and the ");
-        System.out.println("./time.props-File for all persistent Settings.");
+        System.out.println("./time.props-File for all persistent Setting.");
         System.out.println("");
         System.out.println("Usage: TimeTool [ MAIN-PARAMETER ] [ SETTING-PARAMETER ]");
         System.out.println("");

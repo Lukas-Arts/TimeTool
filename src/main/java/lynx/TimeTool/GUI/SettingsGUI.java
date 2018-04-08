@@ -1,6 +1,6 @@
 package lynx.TimeTool.GUI;
 
-import lynx.TimeTool.Settings;
+import lynx.TimeTool.Setting;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +19,7 @@ public class SettingsGUI extends JFrame {
     private HashMap<String,JComponent> fields=new HashMap<>();
     private HashMap<String,String> settings;
     public SettingsGUI(HashMap<String,String> settings){
-        super("Settings");
+        super("Setting");
         this.settings=settings;
         int width=400;
         int height=300;
@@ -45,7 +45,7 @@ public class SettingsGUI extends JFrame {
             jpi.add(new JLabel(key.replace("_"," ")+": "));
             if(key.contains("Color")){
                 JPanel jpc=new JPanel();
-                Color c=Settings.getColorFromString(settings.get(key));
+                Color c= Setting.getColorFromString(settings.get(key));
                 jpc.setBackground(c);
                 jpc.addMouseListener(new MouseAdapter() {
                     @Override

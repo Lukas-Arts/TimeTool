@@ -31,6 +31,7 @@ Settings:
 | -l/-L/-location/-Location | LOCATION (the location for the Logging-.csv-File) (Optional, if not present Setting is taken from `./time.props` or set to `./time.csv`) |
 | -m/-M/-month/-Month | MONTH (only valid for -list) |
 | -y/-Y/-year/-Year | YEAR (only valid for -list) |
+| -d/-D/-diagram/-Diagram | DIAGRAMTYPE ('bar' only, so far) |
 
 ### Console 
 
@@ -69,5 +70,5 @@ To start the GUI simply enter
 
 `timetool gui`
 
-This will bring up a little Overlay at the top-center of your Screen. You may double-Click this Overlay to start/stop the Worktime-Logging. Rightclick the Overlay to access the Settings. Theres also an Icon in the System-Tray.
+This will bring up a little Overlay at the top-center of your Screen. You may double-Click this Overlay to start/stop the Worktime-Logging. Rightclick the Overlay to access the Settings or Display a Diagram for your current statistics. Theres also an Icon in the System-Tray.
 Note that the Global-Shortcuts-Feature is probably only available on Linux Systems   .
