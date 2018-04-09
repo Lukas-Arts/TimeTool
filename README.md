@@ -2,6 +2,8 @@
 This is a simple Tool for logging working hours. Just a simple CLI and a small GUI. It utilizes a simple .csv-Files 
 to store and manage all Data and the `./time.props`-File for all persistent Settings.
 
+![alt text](https://github.com/Lukas-Arts/TimeTool/blob/master/Screenshot-v.0.3.png "Screenshot v.0.3")
+
 ## Installation
 
 Download the `timetool-x.zip`-Archive (where x is the Version-Number e.g. '0.1') and extract it in some temp-Folder. Then execute the install.sh. This will install all Files to `~/TimeTool` and setup a Shortcut in `/usr/bin` so you can simply type 'timetool' instead of 'java -jar TimeTool.jar'.

@@ -27,7 +27,6 @@ public class GUI extends JDialog{
     private GlobalHotkeyListener loginListener;
     private GUI self=this;
     public GUI(HashMap<String,String> settings){
-        //super("TimeTool");
         this.setTitle("TimeTool");
         this.settings=settings;
         int width=100;
@@ -164,7 +163,6 @@ public class GUI extends JDialog{
                         //ignore
                     }
                     long diff=System.currentTimeMillis()-start;
-                    System.out.println(diff);
                     jl.setText(Util.getTimeDiff(diff));
                     repaint();
                     revalidate();
