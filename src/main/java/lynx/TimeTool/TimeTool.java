@@ -248,7 +248,7 @@ public class TimeTool {
                     Util.ADD_UNEVEN_AT_START)+"|               |                         ");
         }
     }
-    private void monthly(){
+    public void monthly(){
         List<WorkTimeItem> items=readWorkTimeFile(settings.get(Setting.LOCATION));
         int lastMonth=-1;
         int lastYear=-1;

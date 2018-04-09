@@ -8,8 +8,13 @@ public class TrayMenu extends JPopupMenu {
         add(new JMenuItem(new MyAbstractAction("Show"){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Show!");
                 gui.setVisible(true);
+            }
+        }));
+        add(new JMenuItem(new MyAbstractAction("Exit"){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
             }
         }));
     }

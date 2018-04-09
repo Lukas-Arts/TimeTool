@@ -10,6 +10,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -29,6 +30,8 @@ public class DiagramGUI extends JFrame {
         Toolkit t=Toolkit.getDefaultToolkit();
         this.setLocation(t.getScreenSize().width / 2 - width / 2, t.getScreenSize().height / 2 - height / 2);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        TimeTool tt=new TimeTool(settings);
+        tt.monthly();
         init();
         this.setVisible(true);
     }
@@ -39,13 +42,17 @@ public class DiagramGUI extends JFrame {
         JPanel jp3=new JPanel(new GridLayout(1,2));
         jp3.add(new JLabel(" Year:"));
         HashMap<Integer,ArrayList<Integer>> yearMonthMap=getAvailable();
-        yearSelector=new JComboBox(yearMonthMap.keySet().toArray());
+        Object[] years=yearMonthMap.keySet().toArray();
+        Arrays.sort(years);
+        yearSelector=new JComboBox(years);
         yearSelector.setSelectedIndex(yearSelector.getItemCount()-1);
         jp3.add(yearSelector);
         jp2.add(jp3);
         JPanel jp4=new JPanel(new GridLayout(1,2));
         jp4.add(new JLabel(" Month:"));
-        monthSelector=new JComboBox(yearMonthMap.get(yearSelector.getSelectedItem()).toArray());
+        Object[] months=yearMonthMap.get(yearSelector.getSelectedItem()).toArray();
+        Arrays.sort(months);
+        monthSelector=new JComboBox(months);
         monthSelector.setSelectedIndex(monthSelector.getItemCount()-1);
         jp4.add(monthSelector);
         jp2.add(jp4);
@@ -89,6 +96,7 @@ public class DiagramGUI extends JFrame {
                     Collections.sort(projects);
                     jp5.removeAll();
                     projectSelectors.clear();
+                    jp5.setLayout(new GridLayout((int)Math.ceil(projects.size()/4.0),Math.min(projects.size(),4)));
                     for(String p:projects){
                         JCheckBox jcb3=new JCheckBox(p,true);
                         jp5.add(jcb3);
