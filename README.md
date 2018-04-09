@@ -10,9 +10,11 @@ Download the `timetool-x.zip`-Archive (where x is the Version-Number e.g. '0.1')
 
 ## Usage
 
+### General
+
 `timetool [OPTION] [SETTING]`
 
-Options: 
+#### Options: 
 
 | Option |  Description  | Possible Parameter |
 | -------------- | ---------- | -------------------------- |
@@ -24,7 +26,7 @@ Options:
 | -help          | Shows this Help-Message |                            |
 | -version       | Shows the current Version |                            |
         
-Settings: 
+#### Settings: 
 
 | Setting | Description  |
 | --------- | --------- |

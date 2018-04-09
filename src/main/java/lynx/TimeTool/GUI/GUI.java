@@ -98,6 +98,14 @@ public class GUI extends JDialog{
                 }
             });
             popup.add(mi);
+            MenuItem mi2=new MenuItem("Exit");
+            mi2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(0);
+                }
+            });
+            popup.add(mi2);
             TrayIcon trayIcon = new TrayIcon(img);
             trayIcon.setPopupMenu(popup);
             SystemTray tray = SystemTray.getSystemTray();
@@ -107,12 +115,6 @@ public class GUI extends JDialog{
         } catch (AWTException e) {
             e.printStackTrace();
         }
-        /*new BufferedImage(24,24,BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g=img.createGraphics();
-        //reset composite
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-        g.setColor(new Color(9,152,200));
-        g.drawRect(0,0,23,23);*/
     }
     private GlobalHotkeyListener setUpHook(String s,ActionListener al){
         String s2[]=s.split("\\+");
