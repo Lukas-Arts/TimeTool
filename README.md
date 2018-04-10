@@ -6,7 +6,11 @@ to store and manage all Data and the `./time.props`-File for all persistent Sett
 
 ## Installation
 
+### Linux/Unix
 Download the `timetool-x.zip`-Archive (where x is the Version-Number e.g. '0.1') and extract it in some temp-Folder. Then execute the install.sh. This will install all Files to `~/TimeTool` and setup a Shortcut in `/usr/bin` so you can simply type 'timetool' instead of 'java -jar TimeTool.jar'.
+
+### Windows
+Download the `timetool-x.zip`-Archive (where x is the Version-Number e.g. '0.1') and extract it to your desired Directory. You may want to setup your Classpath to point to `./timetool.bat` so you can simply type 'timetool' instead oof 'java -jar TimeTool.jar'.
 
 ## Usage
 

@@ -1,0 +1,27 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <id>bin</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <!-- Extra FileSet to exclude the Target-Folder-->
+        <fileSet>
+            <directory>./target</directory>
+            <includes>
+                <include>./TimeTool.jar</include>
+            </includes>
+            <outputDirectory>./</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <includes>
+                <include>./install.sh</include>
+                <include>./timetool.sh</include>
+                <include>./timetool.bat</include>
+                <include>./tray.png</include>
+                <include>./README.md</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
