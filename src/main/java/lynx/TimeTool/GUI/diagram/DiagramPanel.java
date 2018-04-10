@@ -1,6 +1,8 @@
 package lynx.TimeTool.GUI.diagram;
 
+import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class DiagramPanel extends AbstractDiagram {
@@ -14,7 +16,14 @@ public class DiagramPanel extends AbstractDiagram {
     public DiagramPanel(Diagram d,boolean legend){
         this(d);
         if(legend){
-            this.l=new Legend(d);
+            this.l=new Legend(d,new ArrayList<>());
+            this.add(l,BorderLayout.EAST);
+        }
+    }
+    public DiagramPanel(Diagram d, boolean legend, ArrayList<JPanel> otherSettings){
+        this(d);
+        if(legend){
+            this.l=new Legend(d,otherSettings);
             this.add(l,BorderLayout.EAST);
         }
     }

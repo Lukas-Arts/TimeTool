@@ -27,6 +27,12 @@ public class Axis {
         }
         return new Axis(orientation,items,p,text);
     }
+    public List<Value> getAxisItems(){
+        return axisItems;
+    }
+    public Padding getPadding(){
+        return p;
+    }
     /**
      *  @return the Location of the Value on the DiagramPanel. (The Location is set to 0-Location, if the Value is not
      *  contained in axisItems and the axis is not of Type java.lang.Number

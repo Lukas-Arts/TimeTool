@@ -21,7 +21,9 @@ public class DiagramGUI extends JFrame {
     private HashMap<String,String> settings;
     private DiagramPanel dp;
     private JComboBox yearSelector;
+    private JPanel yearSelectorPanel;
     private JComboBox monthSelector;
+    private JPanel monthSelectorPanel;
     public DiagramGUI(HashMap<String,String> settings){
         super("Diagram");
         this.settings=settings;
@@ -39,25 +41,27 @@ public class DiagramGUI extends JFrame {
     private void init(){
         this.setLayout(new BorderLayout());
         JPanel jp=new JPanel(new BorderLayout());
-        JPanel jp2=new JPanel(new GridLayout(1,2));
-        JPanel jp3=new JPanel(new GridLayout(1,2));
-        jp3.add(new JLabel(" Year:"));
+        //JPanel jp2=new JPanel(new GridLayout(1,2));
+        yearSelectorPanel=new JPanel();
+        yearSelectorPanel.setLayout(new BorderLayout());
+        yearSelectorPanel.add(new JLabel(" Year: "),BorderLayout.CENTER);
         HashMap<Integer,ArrayList<Integer>> yearMonthMap=getAvailable();
         Object[] years=yearMonthMap.keySet().toArray();
         Arrays.sort(years);
         yearSelector=new JComboBox(years);
         yearSelector.setSelectedIndex(yearSelector.getItemCount()-1);
-        jp3.add(yearSelector);
-        jp2.add(jp3);
-        JPanel jp4=new JPanel(new GridLayout(1,2));
-        jp4.add(new JLabel(" Month:"));
+        yearSelectorPanel.add(yearSelector,BorderLayout.EAST);
+        //jp2.add(yearSelectorPanel);
+        monthSelectorPanel=new JPanel();
+        monthSelectorPanel.setLayout(new BorderLayout());
+        monthSelectorPanel.add(new JLabel(" Month: "),BorderLayout.CENTER);
         Object[] months=yearMonthMap.get(yearSelector.getSelectedItem()).toArray();
         Arrays.sort(months);
         monthSelector=new JComboBox(months);
         monthSelector.setSelectedIndex(monthSelector.getItemCount()-1);
-        jp4.add(monthSelector);
-        jp2.add(jp4);
-        jp.add(jp2,BorderLayout.NORTH);
+        monthSelectorPanel.add(monthSelector,BorderLayout.EAST);
+        //jp2.add(monthSelectorPanel);
+        //jp.add(jp2,BorderLayout.NORTH);
         String loc=settings.get(Setting.LOCATION).replace(".csv",
                 "_"+yearSelector.getSelectedItem()+"_"+ Util.getWithLeadingZero(Integer.parseInt(monthSelector.getSelectedItem().toString()))+".csv");
         ArrayList<String> projects=new ArrayList<>(TimeTool.getProjectsFromFile(loc));
@@ -134,10 +138,12 @@ public class DiagramGUI extends JFrame {
                 max=l;
             }
         }
-        System.out.println(Math.ceil(max));
         Axis yAxis=Axis.getAxis(Axis.VERTICAL,Math.ceil(max),1,padding,"(Hours)");
         if(dp==null){
-            dp=new DiagramPanel(new Diagram(xAxis,yAxis,lines,Diagram.BAR_FILLED_STACKED),true);
+            ArrayList<JPanel> otherSettings=new ArrayList<>();
+            otherSettings.add(yearSelectorPanel);
+            otherSettings.add(monthSelectorPanel);
+            dp=new DiagramPanel(new Diagram(xAxis,yAxis,lines,Diagram.BAR_FILLED_STACKED),true,otherSettings);
         }else{
             dp.clear();
             dp.setXAxis(xAxis);

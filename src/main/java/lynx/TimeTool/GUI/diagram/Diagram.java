@@ -67,7 +67,6 @@ public class Diagram extends AbstractDiagram {
         this.lines.clear();
     }
     public void setType(String type){
-        System.out.println(type);
         this.type=type;
     }
     public void paint(Graphics g){
@@ -75,11 +74,9 @@ public class Diagram extends AbstractDiagram {
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g.setColor(Color.WHITE);
         g.fillRect(0,0,getWidth(),getHeight());
-        g.setColor(Color.BLACK);
-        xAxis.paint(g,getWidth(),getHeight());
-        yAxis.paint(g,getWidth(),getHeight());
-        int offsetStep=10;
-        int offset= -(lines.size()*offsetStep)/2;
+        //int one=(xAxis.getLocation(xAxis.getAxisItems().get(1),getWidth(),getHeight())-xAxis.getPadding().getLeft());
+        int offsetStep=(xAxis.getLocation(xAxis.getAxisItems().get(1),getWidth(),getHeight())-xAxis.getPadding().getLeft());
+        int offset= -(lines.size()*(int)Math.ceil(offsetStep/(double)lines.size()))/2;
         HashMap<String,Value> stacked=new HashMap<>();
         for(DataLine line:lines){
             Point lastPoint=null;
@@ -89,11 +86,11 @@ public class Diagram extends AbstractDiagram {
                 g.setColor(point.getColor());
                 switch (type){
                     case BAR:{
-                        g.drawRect(x+offset,y,offsetStep,yAxis.getNullLocation(getWidth(),getHeight())-y);
+                        g.drawRect(x+offset,y,(int)Math.ceil(offsetStep/(double)lines.size()),yAxis.getNullLocation(getWidth(),getHeight())-y);
                         break;
                     }
                     case BAR_FILLED:{
-                        g.fillRect(x+offset,y,offsetStep,yAxis.getNullLocation(getWidth(),getHeight())-y);
+                        g.fillRect(x+offset,y,(int)Math.ceil(offsetStep/(double)lines.size()),yAxis.getNullLocation(getWidth(),getHeight())-y);
                         break;
                     }
                     case BAR_STACKED:{
@@ -110,7 +107,7 @@ public class Diagram extends AbstractDiagram {
                         }
                         int top=yAxis.getLocation(val,getWidth(),getHeight());
                         int bottom=yAxis.getLocation(new Value(lastY),getWidth(),getHeight());
-                        g.drawRect(x-5,top,10,bottom-top);
+                        g.drawRect(x-(offsetStep-10)/2,top,offsetStep-10,bottom-top);
                         break;
                     }
                     case BAR_FILLED_STACKED:{
@@ -127,7 +124,7 @@ public class Diagram extends AbstractDiagram {
                         }
                         int top=yAxis.getLocation(val,getWidth(),getHeight());
                         int bottom=yAxis.getLocation(new Value(lastY),getWidth(),getHeight());
-                        g.fillRect(x-5,top,10,bottom-top);
+                        g.fillRect(x-(offsetStep-10)/2,top,offsetStep-10,bottom-top);
                         break;
                     }
                     case LINE:{
@@ -143,9 +140,12 @@ public class Diagram extends AbstractDiagram {
                 }
             }
             if(!type.contains(STACKED)){
-                offset+=offsetStep;
+                offset+=(int)Math.ceil(offsetStep/(double)lines.size());
             }
         }
+        g.setColor(Color.BLACK);
+        xAxis.paint(g,getWidth(),getHeight());
+        yAxis.paint(g,getWidth(),getHeight());
     }
     public static void main(String args[]){
         JFrame jf=new JFrame();
