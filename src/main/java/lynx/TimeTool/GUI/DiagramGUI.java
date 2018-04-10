@@ -1,14 +1,17 @@
 package lynx.TimeTool.GUI;
 
+import lynx.TimeTool.GUI.diagram.*;
 import lynx.TimeTool.Setting;
 import lynx.TimeTool.TimeTool;
 import lynx.TimeTool.Util.Util;
+import lynx.TimeTool.WorkTimeItem;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,8 +22,6 @@ public class DiagramGUI extends JFrame {
     private DiagramPanel dp;
     private JComboBox yearSelector;
     private JComboBox monthSelector;
-    private JPanel jp5;
-    private ArrayList<JCheckBox> projectSelectors=new ArrayList<>();
     public DiagramGUI(HashMap<String,String> settings){
         super("Diagram");
         this.settings=settings;
@@ -61,18 +62,6 @@ public class DiagramGUI extends JFrame {
                 "_"+yearSelector.getSelectedItem()+"_"+ Util.getWithLeadingZero(Integer.parseInt(monthSelector.getSelectedItem().toString()))+".csv");
         ArrayList<String> projects=new ArrayList<>(TimeTool.getProjectsFromFile(loc));
         Collections.sort(projects);
-        jp5=new JPanel(new GridLayout((int)Math.ceil(projects.size()/4.0),Math.min(projects.size(),4)));
-        projectSelectors.clear();
-        for(String p:projects){
-            JCheckBox jcb3=new JCheckBox(p,true);
-            jp5.add(jcb3);
-            projectSelectors.add(jcb3);
-        }
-        addListenerToProjects();
-        JPanel jp6=new JPanel(new BorderLayout());
-        jp6.add(new JLabel(" Projects: "),BorderLayout.WEST);
-        jp6.add(jp5,BorderLayout.CENTER);
-        jp.add(jp6,BorderLayout.CENTER);
         this.add(jp,BorderLayout.NORTH);
         yearSelector.addItemListener(new ItemListener() {
             @Override
@@ -94,39 +83,66 @@ public class DiagramGUI extends JFrame {
                             "_"+yearSelector.getSelectedItem()+"_"+ Util.getWithLeadingZero(Integer.parseInt(monthSelector.getSelectedItem().toString()))+".csv");
                     ArrayList<String> projects=new ArrayList<>(TimeTool.getProjectsFromFile(loc));
                     Collections.sort(projects);
-                    jp5.removeAll();
-                    projectSelectors.clear();
-                    jp5.setLayout(new GridLayout((int)Math.ceil(projects.size()/4.0),Math.min(projects.size(),4)));
-                    for(String p:projects){
-                        JCheckBox jcb3=new JCheckBox(p,true);
-                        jp5.add(jcb3);
-                        projectSelectors.add(jcb3);
-                    }
-                    addListenerToProjects();
-                    dp.changeSetUp((int)yearSelector.getSelectedItem(),(int)e.getItem(),projects);
+                    changeSetup((int)yearSelector.getSelectedItem(),(int)e.getItem(),projects);
                     repaint();
                     revalidate();
                 }
             }
         });
-        dp=new DiagramPanel(settings.get(Setting.LOCATION),-1,-1,new ArrayList<>(projects));
+        changeSetup(-1,-1,new ArrayList<>(projects));
         this.add(dp,BorderLayout.CENTER);
     }
-    private void addListenerToProjects(){
-        for(JCheckBox jcb:projectSelectors){
-            jcb.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    ArrayList<String> selected=new ArrayList<>();
-                    for(JCheckBox jcb:projectSelectors){
-                        if(jcb.isSelected()){
-                            selected.add(jcb.getText());
-                        }
-                    }
-                    dp.changeSetUp((int)yearSelector.getSelectedItem(),(int)monthSelector.getSelectedItem(),selected);
-                    repaint();
+    private void changeSetup(int year,int month,ArrayList<String> projects){
+        HashMap<String,Double> dayWorkMap=new HashMap<>();
+        ZonedDateTime zdt=ZonedDateTime.now();
+        if(year<0){
+            year=zdt.getYear();
+        }
+        if(month<0){
+            month=zdt.getMonthValue();
+        }
+        String location=settings.get(Setting.LOCATION).replace(".csv","_"+year+"_"+ Util.getWithLeadingZero(month)+".csv");
+        ArrayList<WorkTimeItem> items=TimeTool.readWorkTimeFile(location,projects);
+        Padding padding=new Padding(20,20,30,55);
+        ArrayList<Value> xAxisItems=new ArrayList<>();
+        Axis xAxis=new Axis(Axis.HORIZONTAL,xAxisItems,padding,"(Days)");
+        xAxisItems.add(new Value(""));
+        ArrayList<DataLine> lines=new ArrayList<>();
+        for(WorkTimeItem item:items){
+            String d=item.getStartDate().split("-")[2];
+            dayWorkMap.put(d,dayWorkMap.getOrDefault(d, 0.0)+item.getDuration()/1000.0/60/60);
+            DataLine line=null;
+            for(DataLine l:lines){
+                if(l.getName().equalsIgnoreCase(item.getProject())){
+                    line=l;
                 }
-            });
+            }
+            if(line==null){
+                line=new DataLine(item.getProject());
+                lines.add(line);
+            }
+            Value x=new Value(d);
+            line.add(new DataItem(x,new Value(item.getDuration()/1000.0/60/60)));
+
+            if(!xAxisItems.contains(x)){
+                xAxisItems.add(x);
+            }
+        }
+        double max=0;
+        for(double l:dayWorkMap.values()){
+            if(max<l){
+                max=l;
+            }
+        }
+        System.out.println(Math.ceil(max));
+        Axis yAxis=Axis.getAxis(Axis.VERTICAL,Math.ceil(max),1,padding,"(Hours)");
+        if(dp==null){
+            dp=new DiagramPanel(new Diagram(xAxis,yAxis,lines,Diagram.BAR_FILLED_STACKED),true);
+        }else{
+            dp.clear();
+            dp.setXAxis(xAxis);
+            dp.setYAxis(yAxis);
+            dp.setLines(lines);
         }
     }
     private HashMap<Integer, ArrayList<Integer>> getAvailable(){

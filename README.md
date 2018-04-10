@@ -1,5 +1,5 @@
 # TimeTool
-This is a simple Tool for logging working hours. Just a simple CLI and a small GUI. It utilizes a simple .csv-Files 
+This is a simple Tool for logging working hours. Just a simple CLI and a small GUI. It utilizes simple .csv-Files 
 to store and manage all Data and the `./time.props`-File for all persistent Settings.
 
 ![alt text](https://github.com/Lukas-Arts/TimeTool/blob/master/Screenshot-v.0.3.png "Screenshot v.0.3")

@@ -33,6 +33,7 @@ public class GUI extends JDialog{
         int height=25;
         this.setSize(width,height);
         this.setUndecorated(true);
+        //this.setLayout(new BorderLayout());
         this.add(jl);
         jl.setHorizontalAlignment(SwingConstants.CENTER);
         jl.setVerticalAlignment(SwingConstants.CENTER);
