@@ -30,23 +30,23 @@ public class AskOnLogoutGUI extends JFrame {
         JPanel jp2=new JPanel();
         jp2.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         jp2.setLayout(new BorderLayout());
-        jp.add(jp2,BorderLayout.NORTH);
-
-        JPanel jp3=new JPanel(new GridLayout(1,2));
+        jp.add(jp2,BorderLayout.WEST);
+        JPanel jp3=new JPanel();
+        jp3.setLayout(new BoxLayout(jp3,BoxLayout.PAGE_AXIS));
         jp3.add(new JLabel("Project:"));
-        JTextField jtf=new JTextField(settings.get(Setting.PROJECT));
-        jp3.add(jtf);
+        JLabel cLabel=new JLabel("Comment:");
+        jp3.add(cLabel);
         jp2.add(jp3,BorderLayout.NORTH);
 
-        JPanel jp4=new JPanel(new GridLayout(1,2));
-        JLabel cLabel=new JLabel("Comment:");
-        cLabel.setVerticalAlignment(SwingConstants.TOP);
-        jp4.add(cLabel);
+        JPanel jp4=new JPanel(new BorderLayout());
+        jp4.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        JTextField jtf=new JTextField(settings.get(Setting.PROJECT));
+        jp4.add(jtf,BorderLayout.NORTH);
         JTextArea jta=new JTextArea(settings.get(Setting.COMMENT));
+        jta.setLineWrap(true);
         jta.setRows(5);
-        jp4.add(jta);
-        jp2.add(jp4,BorderLayout.CENTER);
-
+        jp4.add(jta,BorderLayout.CENTER);
+        jp.add(jp4,BorderLayout.CENTER);
 
         //Cancel/Apply-Buttons
         JPanel jpx=new JPanel(new GridLayout(1,3));

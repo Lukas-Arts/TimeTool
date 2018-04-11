@@ -98,6 +98,7 @@ public class DiagramGUI extends JFrame {
         changeSetup(-1,-1,new ArrayList<>(projects));
         this.add(dp,BorderLayout.CENTER);
     }
+
     private void changeSetup(int year,int month,ArrayList<String> projects){
         HashMap<String,Double> dayWorkMap=new HashMap<>();
         ZonedDateTime zdt=ZonedDateTime.now();
