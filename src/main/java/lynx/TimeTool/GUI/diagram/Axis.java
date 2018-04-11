@@ -83,20 +83,38 @@ public class Axis {
                 int size2=width-p.getLeft()-p.getRight();
                 int x=p.getLeft()+i*size2/axisItems.size();
                 g.drawLine(x,height-p.getBottom(),x,height-p.getBottom()+5);
-                String s=axisItems.get(i).toString();
-                g.drawString(s,x-(7*s.length()/2),height-p.getBottom()+18);
+                String s2[]=axisItems.get(i).toString().split("\n");
+                int h=0;
+                for(String s:s2){
+                    g.drawString(s,x-(7*s.length()/2),height-p.getBottom()+18+h);
+                    h+=g.getFontMetrics().getHeight();
+                }
             }
-            g.drawString(text,width-p.getRight()-(9*text.length()/2),height-p.getBottom()+18);
+            String s3[]=text.split("\n");
+            int h=0;
+            for(String s:s3){
+                g.drawString(s,width-p.getRight()-(9*text.length()/2),height-p.getBottom()+18+h);
+                h+=g.getFontMetrics().getHeight();
+            }
         }else{
             g.drawLine(p.getLeft(),p.getTop(),p.getLeft(),height-p.getBottom()+5);
             for(int i=0;i<axisItems.size();i++){
                 int size2=height-p.getTop()-p.getBottom();
                 int y=height-p.getBottom()-(i*size2/axisItems.size());
                 g.drawLine(p.getLeft(),y,p.getLeft()-5,y);
-                String s=axisItems.get(i).toString();
-                g.drawString(s,p.getLeft()-20-(7*s.length()/2),y+5);
+                String s2[]=axisItems.get(i).toString().split("\n");
+                int h=0;
+                for(String s:s2){
+                    g.drawString(s,p.getLeft()-20-(7*s.length()/2),y+5+h);
+                    h+=g.getFontMetrics().getHeight();
+                }
             }
-            g.drawString(text,p.getLeft()-20-(9*text.length()/2),p.getTop()+5);
+            String s3[]=text.split("\n");
+            int h=0;
+            for(String s:s3){
+                g.drawString(s,p.getLeft()-20-(9*text.length()/2),p.getTop()+5+h);
+                h+=g.getFontMetrics().getHeight();
+            }
         }
     }
 }

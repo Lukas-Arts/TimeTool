@@ -11,6 +11,8 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,13 +109,15 @@ public class DiagramGUI extends JFrame {
         }
         String location=settings.get(Setting.LOCATION).replace(".csv","_"+year+"_"+ Util.getWithLeadingZero(month)+".csv");
         ArrayList<WorkTimeItem> items=TimeTool.readWorkTimeFile(location,projects);
-        Padding padding=new Padding(20,20,30,55);
+        Padding padding=new Padding(20,20,45,55);
         ArrayList<Value> xAxisItems=new ArrayList<>();
         Axis xAxis=new Axis(Axis.HORIZONTAL,xAxisItems,padding,"(Days)");
         xAxisItems.add(new Value(""));
         ArrayList<DataLine> lines=new ArrayList<>();
         for(WorkTimeItem item:items){
-            String d=item.getStartDate().split("-")[2];
+            ZonedDateTime zdt2=ZonedDateTime.ofInstant(Instant.ofEpochMilli(item.getStart()), ZoneId.systemDefault());
+
+            String d=Util.getWithLeadingZero(zdt2.getDayOfMonth())+"\n"+zdt2.getDayOfWeek().name().substring(0,3);//item.getStartDate().split("-")[2];
             dayWorkMap.put(d,dayWorkMap.getOrDefault(d, 0.0)+item.getDuration()/1000.0/60/60);
             DataLine line=null;
             for(DataLine l:lines){
