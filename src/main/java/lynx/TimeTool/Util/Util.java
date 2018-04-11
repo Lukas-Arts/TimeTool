@@ -4,9 +4,9 @@ public class Util {
     public static final boolean ADD_UNEVEN_AT_END=true;
     public static final boolean ADD_UNEVEN_AT_START=false;
     public static String getTimeDiff(long diff){
-        int s= (int) ((diff/  1000)%60);
-        int m= (int) ((diff/ 60000)%60);
-        int h= (int) ((diff/360000)%24);
+        int s= (int) ((diff/1000)%60);
+        int m= (int) ((diff/1000/60)%60);
+        int h= (int) ((diff/1000/60/60)%24);
         return getWithLeadingZero(h)+":"+getWithLeadingZero(m)+":"+getWithLeadingZero(s);
     }
 

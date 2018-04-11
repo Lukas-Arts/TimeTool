@@ -76,7 +76,7 @@ public class Diagram extends AbstractDiagram {
         g.fillRect(0,0,getWidth(),getHeight());
         //int one=(xAxis.getLocation(xAxis.getAxisItems().get(1),getWidth(),getHeight())-xAxis.getPadding().getLeft());
         int offsetStep=(xAxis.getLocation(xAxis.getAxisItems().get(1),getWidth(),getHeight())-xAxis.getPadding().getLeft());
-        int offset= -(lines.size()*(int)Math.ceil(offsetStep/(double)lines.size()))/2;
+        int offset= -(int)Math.ceil((offsetStep)/2);
         HashMap<String,Value> stacked=new HashMap<>();
         for(DataLine line:lines){
             Point lastPoint=null;
