@@ -28,6 +28,13 @@ public class GUI extends JDialog{
     private GUI self=this;
     public GUI(HashMap<String,String> settings){
         this.setTitle("TimeTool");
+        try {
+            BufferedImage img= ImageIO.read(new File("./tray.png"));
+            this.setIconImage(img);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         this.settings=settings;
         int width=100;
         int height=25;
@@ -39,7 +46,7 @@ public class GUI extends JDialog{
         jl.setVerticalAlignment(SwingConstants.CENTER);
         jl.setOpaque(true);
         this.tt=new TimeTool(settings);
-
+        jl.setForeground(Setting.getColorFromString(settings.get(Setting.TEXT_COLOR)));
         jl.setBackground(Setting.getColorFromString(settings.get(Setting.INACTIVE_COLOR)));
         Toolkit t=Toolkit.getDefaultToolkit();
         this.setLocation(t.getScreenSize().width / 2 - width / 2, 0);
@@ -111,9 +118,7 @@ public class GUI extends JDialog{
             trayIcon.setPopupMenu(popup);
             SystemTray tray = SystemTray.getSystemTray();
             tray.add(trayIcon);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (AWTException e) {
+        } catch (IOException | AWTException e) {
             e.printStackTrace();
         }
     }

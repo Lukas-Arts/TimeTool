@@ -25,7 +25,7 @@ public class Legend extends JPanel {
         for(JPanel j:otherSettings){
             this.otherSettings.add(j);
         }
-        String s[]={"Bar","bar stacked","Bar filled","Bar filled stacked","Line"};
+        String s[]={"Bar","bar stacked","Bar filled","Bar filled stacked","Line", "Calendar"};
         JComboBox jcb=new JComboBox(s);
         jcb.setSelectedIndex(3);
         jcb.addItemListener(new ItemListener() {
@@ -43,7 +43,7 @@ public class Legend extends JPanel {
         jp.add(new JLabel(" Type: "),BorderLayout.CENTER);
         jp.add(jcb,BorderLayout.EAST);
         this.otherSettings.add(jp);
-        this.otherSettings.setBorder(BorderFactory.createTitledBorder("Other Settings"));
+        this.otherSettings.setBorder(BorderFactory.createTitledBorder("Settings"));
         this.add(this.otherSettings,BorderLayout.NORTH);
         JPanel jp2=new JPanel();
         jp2.setLayout(new BorderLayout());

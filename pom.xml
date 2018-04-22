@@ -6,7 +6,7 @@
     <groupId>lynx.TimeTool</groupId>
     <artifactId>TimeTool</artifactId>
     <properties>
-        <buildVersion>0.3</buildVersion>
+        <buildVersion>0.4.5</buildVersion>
     </properties>
     <version>${buildVersion}</version>
     <build>

@@ -1,9 +1,10 @@
 #
-#Mon Apr 09 01:58:05 CEST 2018
+#Sun Apr 22 16:28:14 CEST 2018
 Global_Logout-Shortcut=Alt_L+q
 Color_Active=r\=16|g\=32|b\=18|a\=255
 Comment=
 Global_Login-Shortcut=Alt_L+s
+Color_Text=r\=204|g\=204|b\=204|a\=255
 Ask_on_Logout=true
 Project=
 Location=./time.csv

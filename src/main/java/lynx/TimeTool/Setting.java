@@ -16,6 +16,8 @@ public class Setting {
     public static final String MONTH="Month";
     public static final String YEAR="Year";
     public static final String DIAGRAM="Diagram";
+    public static final String TEXT_COLOR="Color_Text";
+
     public static Color getColorFromString(String s){
         Color color=Color.black;
         if(s!=null){
@@ -25,7 +27,7 @@ public class Setting {
             }else{
                 if(s1.length==3){
                     color=new Color(getVal(s1[0]),getVal(s1[1]),getVal(s1[2]));
-                }else if(s1.length==4){
+                }else {
                     color=new Color(getVal(s1[0]),getVal(s1[1]),getVal(s1[2]),getVal(s1[3]));
                 }
             }

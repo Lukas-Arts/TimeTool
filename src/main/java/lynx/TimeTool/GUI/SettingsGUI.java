@@ -2,12 +2,15 @@ package lynx.TimeTool.GUI;
 
 import lynx.TimeTool.Setting;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +23,12 @@ public class SettingsGUI extends JFrame {
     private HashMap<String,String> settings;
     public SettingsGUI(HashMap<String,String> settings){
         super("Setting");
+        try {
+            BufferedImage img= ImageIO.read(new File("./tray.png"));
+            this.setIconImage(img);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.settings=settings;
         int width=400;
         int height=300;
@@ -91,15 +100,13 @@ public class SettingsGUI extends JFrame {
     }
 
     private boolean isBoolean(String s) {
-        if(s==null)
-            return false;
-        return s.equalsIgnoreCase("true")||s.equalsIgnoreCase("false");
+        return s != null && (s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false"));
     }
 
     private void applyChanges(){
         for(String key:fields.keySet()){
             if(key.contains("Color")){
-                Color c=((JPanel)fields.get(key)).getBackground();
+                Color c= fields.get(key).getBackground();
                 settings.put(key,"r="+c.getRed()+"|g="+c.getGreen()+"|b="+c.getBlue()+"|a="+c.getAlpha());
             }else{
                 JComponent jc=fields.get(key);

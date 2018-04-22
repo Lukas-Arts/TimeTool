@@ -72,4 +72,9 @@ public class DiagramPanel extends AbstractDiagram {
     public void setType(String type) {
         d.setType(type);
     }
+
+    @Override
+    public void setMonth(int year, int month) {
+        d.setMonth(year,month);
+    }
 }

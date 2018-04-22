@@ -14,4 +14,5 @@ public abstract class AbstractDiagram extends JPanel {
     public abstract void removeLine(String name);
     public abstract void clear();
     public abstract void setType(String type);
+    public abstract void setMonth(int year,int month);
 }

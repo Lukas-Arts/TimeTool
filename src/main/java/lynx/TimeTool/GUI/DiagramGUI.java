@@ -6,11 +6,14 @@ import lynx.TimeTool.TimeTool;
 import lynx.TimeTool.Util.Util;
 import lynx.TimeTool.WorkTimeItem;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -28,9 +31,15 @@ public class DiagramGUI extends JFrame {
     private JPanel monthSelectorPanel;
     public DiagramGUI(HashMap<String,String> settings){
         super("Diagram");
+        try {
+            BufferedImage img= ImageIO.read(new File("./tray.png"));
+            this.setIconImage(img);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.settings=settings;
-        int width=400;
-        int height=300;
+        int width=600;
+        int height=400;
         this.setSize(width,height);
         Toolkit t=Toolkit.getDefaultToolkit();
         this.setLocation(t.getScreenSize().width / 2 - width / 2, t.getScreenSize().height / 2 - height / 2);
@@ -117,7 +126,6 @@ public class DiagramGUI extends JFrame {
         ArrayList<DataLine> lines=new ArrayList<>();
         for(WorkTimeItem item:items){
             ZonedDateTime zdt2=ZonedDateTime.ofInstant(Instant.ofEpochMilli(item.getStart()), ZoneId.systemDefault());
-
             String d=Util.getWithLeadingZero(zdt2.getDayOfMonth())+"\n"+zdt2.getDayOfWeek().name().substring(0,3);//item.getStartDate().split("-")[2];
             dayWorkMap.put(d,dayWorkMap.getOrDefault(d, 0.0)+item.getDuration()/1000.0/60/60);
             DataLine line=null;
@@ -149,11 +157,13 @@ public class DiagramGUI extends JFrame {
             otherSettings.add(yearSelectorPanel);
             otherSettings.add(monthSelectorPanel);
             dp=new DiagramPanel(new Diagram(xAxis,yAxis,lines,Diagram.BAR_FILLED_STACKED),true,otherSettings);
+            dp.setMonth(year,month);
         }else{
             dp.clear();
             dp.setXAxis(xAxis);
             dp.setYAxis(yAxis);
             dp.setLines(lines);
+            dp.setMonth(year,month);
         }
     }
     private HashMap<Integer, ArrayList<Integer>> getAvailable(){

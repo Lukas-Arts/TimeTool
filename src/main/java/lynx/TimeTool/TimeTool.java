@@ -403,6 +403,7 @@ public class TimeTool {
             settings.put(Setting.ASK_ON_LOGOUT,p.getProperty(Setting.ASK_ON_LOGOUT,"false"));
             settings.put(Setting.ACTIVE_COLOR,p.getProperty(Setting.ACTIVE_COLOR));
             settings.put(Setting.INACTIVE_COLOR,p.getProperty(Setting.INACTIVE_COLOR));
+            settings.put(Setting.TEXT_COLOR,p.getProperty(Setting.TEXT_COLOR));
 
             settings.put(Setting.ALWAYS_ON_TOP,p.getProperty(Setting.ALWAYS_ON_TOP,"true"));
             settings.put(Setting.GLOBAL_LOGOUT_HOOK,p.getProperty(Setting.GLOBAL_LOGOUT_HOOK));
